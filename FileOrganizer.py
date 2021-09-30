@@ -9,33 +9,31 @@ import shutil
 # Append all files in the downloads directory to a list
 USERNAME = os.getlogin()
 
-files = [file for file in os.listdir(
-    r'C:\Users\{0}\Desktop\To-Do'.format(USERNAME))]
-print(files)
+# files = [file for file in os.listdir(
+#     r'C:\Users\{0}\Desktop\To-Do'.format(USERNAME))]
+# print(files)
 
 # sorting by extension function
 
 
 def sort_by_extension(file: str, target_dir: str, *extensions: tuple):
     if file.endswith(extensions):
-        shutil.move(r'C:\Users\{0}\Desktop\To-Do\{1}'.format(USERNAME,
-                    file), target_dir)
+        shutil.move(file, target_dir)
 
 
 def sort_by_name(file: str, target_dir: str, words: str):
     if words in file:
-        shutil.move(r'C:\Users\{0}\Desktop\To-Do\{1}'.format(USERNAME,
-                    file), target_dir)
+        shutil.move(file, target_dir)
 
 
-# sorting
-for file in files:
-    sort_by_extension(file, r'C:\Users\{0}\Pictures\Temp Images'.format(
-        USERNAME), '.jpg', '.jpeg', '.png', '.gif')
-    sort_by_extension(file, r'C:\Users\{0}\Desktop\Books and Comics'.format(
-        USERNAME), 'epub', 'mobi', 'cbz', 'cbr')
-    sort_by_name(
-        file, r'C:\Users\{0}\Pictures\Temp Images'.format(USERNAME), '§')
+# # sorting
+# for file in files:
+#     sort_by_extension(file, r'C:\Users\{0}\Pictures\Temp Images'.format(
+#         USERNAME), '.jpg', '.jpeg', '.png', '.gif')
+#     sort_by_extension(file, r'C:\Users\{0}\Desktop\Books and Comics'.format(
+#         USERNAME), 'epub', 'mobi', 'cbz', 'cbr')
+#     sort_by_name(
+#         file, r'C:\Users\{0}\Pictures\Temp Images'.format(USERNAME), '§')
 
 
 # use watchdog to check when a file is downloaded in the downloads folder
@@ -44,7 +42,20 @@ for file in files:
 class MonitorFolder(FileSystemEventHandler):
 
     def on_created(self, event):
-        print(event.src_path, event.event_type)
+        print(file := event.src_path, event.event_type)
+        print(file)
+        print(repr(file))
+        print(os.listdir(r'C:\Users\{0}\Downloads'.format(USERNAME)))
+        print(file.split('\\')[4])
+        while True:
+            if file.split('\\')[4] in os.listdir(r'C:\Users\{0}\Downloads'.format(USERNAME)):
+                sort_by_extension(file, r'C:\Users\{0}\Pictures\Temp Images'.format(
+                    USERNAME), '.jpg', '.jpeg', '.png', '.gif')
+                sort_by_extension(file, r'C:\Users\{0}\Desktop\Books and Comics'.format(
+                    USERNAME), 'epub', 'mobi', 'cbz', 'cbr')
+                sort_by_name(
+                    file, r'C:\Users\{0}\Pictures\Temp Images'.format(USERNAME), '§')
+                break
 
 
 path = r'C:\Users\suhay\Downloads'
