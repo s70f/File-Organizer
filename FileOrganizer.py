@@ -9,34 +9,37 @@ import shutil
 # Append all files in the downloads directory to a list
 USERNAME = os.getlogin()
 
-# files = [file for file in os.listdir(
-#     r'C:\Users\{0}\Desktop\To-Do'.format(USERNAME))]
-# print(files)
 
-# sorting by extension function
+# Make sorting functions with exceptions
+class FileMoved(Exception):
+    pass
 
 
 def sort_by_extension(file: str, target_dir: str, *extensions: tuple):
     if file.endswith(extensions):
-        shutil.move(file, target_dir)
+        while file.split('\\')[4] not in os.listdir(target_dir):
+            print("moving...")
+            try:
+                shutil.move(file, target_dir)
+            except FileNotFoundError:
+                continue
+        print("Moved!")
+        raise FileMoved
 
 
 def sort_by_name(file: str, target_dir: str, words: str):
     if words in file:
-        shutil.move(file, target_dir)
+        while file.split('\\')[4] not in os.listdir(target_dir):
+            print("moving...")
+            try:
+                shutil.move(file, target_dir)
+            except FileNotFoundError:
+                continue
 
+        print("moved!")
+        raise FileMoved
 
-# # sorting
-# for file in files:
-#     sort_by_extension(file, r'C:\Users\{0}\Pictures\Temp Images'.format(
-#         USERNAME), '.jpg', '.jpeg', '.png', '.gif')
-#     sort_by_extension(file, r'C:\Users\{0}\Desktop\Books and Comics'.format(
-#         USERNAME), 'epub', 'mobi', 'cbz', 'cbr')
-#     sort_by_name(
-#         file, r'C:\Users\{0}\Pictures\Temp Images'.format(USERNAME), '§')
-
-
-# use watchdog to check when a file is downloaded in the downloads folder
+# sort the file after the file is downloaded in the downloads folder
 
 
 class MonitorFolder(FileSystemEventHandler):
@@ -45,17 +48,21 @@ class MonitorFolder(FileSystemEventHandler):
         print(file := event.src_path, event.event_type)
         print(file)
         print(repr(file))
-        print(os.listdir(r'C:\Users\{0}\Downloads'.format(USERNAME)))
-        print(file.split('\\')[4])
-        while True:
-            if file.split('\\')[4] in os.listdir(r'C:\Users\{0}\Downloads'.format(USERNAME)):
-                sort_by_extension(file, r'C:\Users\{0}\Pictures\Temp Images'.format(
-                    USERNAME), '.jpg', '.jpeg', '.png', '.gif')
-                sort_by_extension(file, r'C:\Users\{0}\Desktop\Books and Comics'.format(
-                    USERNAME), 'epub', 'mobi', 'cbz', 'cbr')
-                sort_by_name(
-                    file, r'C:\Users\{0}\Pictures\Temp Images'.format(USERNAME), '§')
-                break
+        file_name = file.split('\\')[4]
+        downloads_dir = os.listdir(r'C:\Users\{0}\Downloads'.format(USERNAME))
+        try:
+            sort_by_extension(file, r'C:\Users\{0}\Pictures\Temp Images'.format(
+                USERNAME), '.jpg', '.jpeg', '.png', '.gif')
+            sort_by_extension(file, r'C:\Users\{0}\Desktop\Books and Comics'.format(
+                USERNAME), 'epub', 'mobi', 'cbz', 'cbr')
+            sort_by_extension(file, r'C:\Users\suhay\AppData\Roaming\.minecraft\resourcepacks'.format(
+                USERNAME), 'epub', 'mobi', 'cbz', 'cbr')
+            sort_by_name(
+                file, r'C:\Users\suhay\AppData\Roaming\.minecraft\resourcepacks'.format(USERNAME), '§')
+        except FileMoved:
+            print("file moved")
+
+# use watchdog to check when a file is downloaded in the downloads folder
 
 
 path = r'C:\Users\suhay\Downloads'
