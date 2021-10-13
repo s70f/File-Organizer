@@ -1,8 +1,6 @@
 from watchdog.observers import Observer
 from watchdog.events import FileSystemEventHandler
-import logging
 import time
-import sys
 import os
 import shutil
 
